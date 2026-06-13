@@ -11,7 +11,6 @@ export default function Post() {
     const navigate = useNavigate();
 
     const userData = useSelector((state) => state.auth.userData);
-
     const isAuthor = post && userData ? post.userId === userData.$id : false;
 
     useEffect(() => {
@@ -33,34 +32,39 @@ export default function Post() {
     };
 
     return post ? (
-        <div className="py-8">
+        <div className="bg-[#fdfbf7] min-h-screen py-10">
             <Container>
-                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-                    <img
-                        src={appwriteService.getFilePreview(post.featuredImage)}
-                        alt={post.title}
-                        className="rounded-xl"
-                    />
+                <div className="max-w-2xl mx-auto">
+                    <h1 className="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-3 leading-tight">
+                        {post.title}
+                    </h1>
+                    <p className="text-gray-400 mb-6">
+                        {new Date(post.$createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                    </p>
+
+                    <div className="w-full mb-8 rounded-2xl overflow-hidden">
+                        <img
+                            src={appwriteService.getFilePreview(post.featuredImage)}
+                            alt={post.title}
+                            className="w-full max-h-[420px] object-cover"
+                        />
+                    </div>
 
                     {isAuthor && (
-                        <div className="absolute right-6 top-6">
+                        <div className="flex gap-2 mb-8">
                             <Link to={`/edit-post/${post.$id}`}>
-                                <Button bgColor="bg-green-500" className="mr-3">
-                                    Edit
-                                </Button>
+                                <Button bgColor="bg-green-600">Edit</Button>
                             </Link>
                             <Button bgColor="bg-red-500" onClick={deletePost}>
                                 Delete
                             </Button>
                         </div>
                     )}
-                </div>
-                <div className="w-full mb-6">
-                    <h1 className="text-2xl font-bold">{post.title}</h1>
-                </div>
-                <div className="browser-css">
-                    {parse(post.content)}
+
+                    <div className="browser-css prose prose-lg max-w-none font-serif text-gray-800">
+                        {parse(post.content)}
                     </div>
+                </div>
             </Container>
         </div>
     ) : null;
