@@ -17,10 +17,15 @@ export default function PostForm({ post }) {
 
     const navigate = useNavigate();
     const userData = useSelector((state) => state.auth.userData);
-    // console.log("USER DATA:", userData);
 
     const submit = async (data) => {
-        console.log("USER DATA:", userData);
+        // Agar user login nahi hai ya session expire ho gaya
+        if (!userData) {
+            alert("Aapka session expire ho gaya hai, please login again.");
+            navigate("/login");
+            return;
+        }
+
         if (post) {
             const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
@@ -38,7 +43,6 @@ export default function PostForm({ post }) {
             }
         } else {
             const file = await appwriteService.uploadFile(data.image[0]);
-             console.log("FILE:", file);
 
             if (file) {
                 const fileId = file.$id;
@@ -103,11 +107,6 @@ export default function PostForm({ post }) {
                 />
                 {post && (
                     <div className="w-full mb-4">
-                         {console.log("Featured Image ID:", post.featuredImage)}
-        {console.log(
-            "Preview URL:",
-            appwriteService.getFilePreview(post.featuredImage)
-        )}
                         <img
                             src={appwriteService.getFilePreview(post.featuredImage)}
                             alt={post.title}
